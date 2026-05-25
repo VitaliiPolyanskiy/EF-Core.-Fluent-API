@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Text;
 
 namespace Fluent_API
 {
@@ -7,13 +8,16 @@ namespace Fluent_API
     {
         static void Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.UTF8;
+            Console.InputEncoding = Encoding.UTF8;
+
             try
             {
                 using (FluentContext db = new FluentContext())
                 {
-                    Student s1 = new Student { FirstName = "Иван", LastName = "Иванов", Age = 20, AverageScore = 11, Phone = "+380671234567", Address = "Садовая, 3", Term = 1 };
-                    Student s2 = new Student { FirstName = "Петр", LastName = "Петров", Age = 19, AverageScore = 12, Phone = "+380671234568", Address = "Садовая, 3", Term = 2 };
-                    Student s3 = new Student { FirstName = "Алексей", LastName = "Алексеев", AverageScore = 10, Phone = "+380671234569", Address = "Садовая, 3", Term = 3 };
+                    Student s1 = new Student { FirstName = "Іван", LastName = "Іваненко", AverageScore = 11, Phone = "+380671234567", Address = "Садова, 3", Term = 1 };
+                    Student s2 = new Student { FirstName = "Петро", LastName = "Петренко", AverageScore = 12, Phone = "+380671234568", Address = "Садова, 3", Term = 2 };
+                    Student s3 = new Student { FirstName = "Олексій", LastName = "Олексієнко", AverageScore = 10, Phone = "+380671234569", Address = "Садова, 3", Term = 3 };
 
                     db.Students.Add(s1);
                     db.Students.Add(s2);
@@ -22,7 +26,7 @@ namespace Fluent_API
                     db.SaveChanges();
 
                     foreach (Student p in db.Students)
-                        Console.WriteLine("{0, 8}{1, 9}{2, 4}{3, 4}{4, 15}{5, 3}", p.FirstName, p.LastName, p.Age,p.AverageScore, p.Phone, p.Term);
+                        Console.WriteLine("{0, 8}{1, 12}{2, 4}{3, 4}{4, 15}{5, 3}", p.FirstName, p.LastName, p.Age,p.AverageScore, p.Phone, p.Term);
                 }
             }
             catch (Exception ex)
@@ -56,13 +60,13 @@ namespace Fluent_API
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Сопоставление класса с таблицей
+            // Зіставлення класу з таблицею
             modelBuilder.Entity<Student>().ToTable("StudentsOfSTEP");
 
-            // Переопределение первичного ключа
+            // Перевизначення первинного ключа
             modelBuilder.Entity<Student>().HasKey(p => p.Ident);
 
-            // Сопоставление свойств
+            // Зіставлення властивостей
             modelBuilder.Entity<Student>().Property(p => p.FirstName).HasColumnName("StudentName");
             modelBuilder.Entity<Student>().Property(p => p.LastName).HasColumnName("StudentSurname");
 
@@ -70,24 +74,24 @@ namespace Fluent_API
             modelBuilder.Entity<Student>()
             .ToTable(t => t.HasCheckConstraint("Age", "Age > 0 AND Age < 120"));
 
-            // Исключение сопоставления для свойства
+            // Виняток зіставлення для властивості
             modelBuilder.Entity<Student>().Ignore(p => p.Address);
 
-            // Значение для столбца и свойства требуется обязательно
+            // Значення для стовпця та властивості потрібно обов'язково
             modelBuilder.Entity<Student>().Property(p => p.FirstName).IsRequired();
             modelBuilder.Entity<Student>().Property(p => p.LastName).IsRequired();
             modelBuilder.Entity<Student>().Property(p => p.AverageScore).IsRequired();
 
-            // Настройка строк
+            // Налаштування рядків
             modelBuilder.Entity<Student>().Property(p => p.FirstName).HasMaxLength(20);
             modelBuilder.Entity<Student>().Property(p => p.LastName).HasMaxLength(20);
             modelBuilder.Entity<Student>().Property(p => p.FirstName).IsUnicode(false);
             modelBuilder.Entity<Student>().Property(p => p.LastName).IsUnicode(false);
 
-            // Настройка чисел decimal
+            // Налаштування чисел decimal
             modelBuilder.Entity<Student>().Property(p => p.AverageScore).HasPrecision(5, 2);
 
-            // Настройка типа столбцов
+            // Налаштування типу стовпців
             modelBuilder.Entity<Student>().Property(p => p.Phone).HasColumnType("varchar").HasMaxLength(20);
 
             base.OnModelCreating(modelBuilder);
@@ -95,7 +99,7 @@ namespace Fluent_API
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=DESKTOP-G30VB0K\MSSQLSERVER01;Database=FluentAPI;Integrated Security=SSPI;TrustServerCertificate=true");
+            optionsBuilder.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=FluentAPI;Integrated Security=SSPI;TrustServerCertificate=true");
 
         }
     }

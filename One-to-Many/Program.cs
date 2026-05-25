@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
 
 namespace One_to_Many
 {
@@ -9,6 +10,9 @@ namespace One_to_Many
     {
         static void Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.UTF8;
+            Console.InputEncoding = Encoding.UTF8;
+
             try
             {
                 using (FluentContext db = new FluentContext())
@@ -19,7 +23,7 @@ namespace One_to_Many
                     db.Groups.Add(academygroup2);
                     var student1 = new Student
                     {
-                        FirstName = "Дмитрий",
+                        FirstName = "Дмитро",
                         LastName = "Морозов",
                         Age = 20,
                         PointAverage = 10.5,
@@ -27,7 +31,7 @@ namespace One_to_Many
                     };
                     var student2 = new Student
                     {
-                        FirstName = "Екатерина",
+                        FirstName = "Катерина",
                         LastName = "Малова",
                         Age = 27,
                         PointAverage = 11.5,
@@ -36,7 +40,7 @@ namespace One_to_Many
                     var student3 = new Student
                     {
                         FirstName = "Максим",
-                        LastName = "Москалик",
+                        LastName = "Москалік",
                         Age = 23,
                         PointAverage = 12,
                         AcademyGroup = academygroup1
@@ -93,12 +97,12 @@ namespace One_to_Many
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=DESKTOP-G30VB0K\MSSQLSERVER01;Database=One_to_Many;Integrated Security=SSPI;TrustServerCertificate=true");
+            optionsBuilder.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=One_to_Many;Integrated Security=SSPI;TrustServerCertificate=true");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Установим связь Один ко Многим между объектом AcademyGroup и объектами Student 
+            // Встановимо зв'язок Один до Багатьох між об'єктом AcademyGroup та об'єктами Student 
 
             modelBuilder.Entity<Student>().HasOne(p => p.AcademyGroup).WithMany(t => t.Student).OnDelete(DeleteBehavior.Cascade);
 
